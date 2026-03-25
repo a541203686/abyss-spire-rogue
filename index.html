@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>卡牌冒险：深渊尖塔（Web 原型）</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app">
+      <header class="topbar">
+        <h1>卡牌冒险：深渊尖塔</h1>
+        <div class="meta">
+          <span id="floorLabel">层数：1 / 9</span>
+          <span id="goldLabel">金币：0</span>
+        </div>
+      </header>
+
+      <main class="layout">
+        <aside class="panel panel-left">
+          <h2>冒险简报</h2>
+          <div class="brief-panel">
+            <p>路线与战斗进度会自动推进，关键操作都放在中间舞台。</p>
+            <div class="brief-box">
+              <h3>本局节奏</h3>
+              <ul>
+                <li>中间点击“进入下一层”推进路线</li>
+                <li>战后在中间选择或跳过奖励卡牌</li>
+                <li>商店层在中间用金币购买卡牌与补给</li>
+                <li>营火阶段在中间完成恢复或冥想</li>
+              </ul>
+            </div>
+            <div class="brief-box">
+              <h3>状态说明</h3>
+              <p>状态区已合并：只展示当前生效状态，避免重复信息。</p>
+            </div>
+          </div>
+        </aside>
+
+        <section class="panel panel-center">
+          <div id="mapView" class="map-view stage-view hidden"></div>
+          <div id="restView" class="rest-view hidden"></div>
+          <div id="rewardView" class="reward-view hidden"></div>
+          <div id="shopView" class="shop-view hidden"></div>
+
+          <div id="battleView" class="battle-view hidden">
+            <div class="battle-scene">
+              <div id="sceneParticles" class="scene-particles" aria-hidden="true"></div>
+              <div id="effectLayer" class="effect-layer" aria-hidden="true"></div>
+              <div id="bossIntro" class="boss-intro" aria-live="polite"></div>
+              <div class="arena enemy-arena">
+                <div class="hp-panel">
+                  <div class="name-row">
+                    <span id="enemyNameTag">敌人</span>
+                    <span id="enemyLevelTag">Lv.1</span>
+                  </div>
+                  <p id="enemyFlavorTag" class="enemy-flavor">等待敌人出现</p>
+                  <div class="hp-track"><div id="enemyHpFill" class="hp-fill"></div></div>
+                  <div id="enemyHpText" class="hp-text">0 / 0</div>
+                  <div id="enemyIntent" class="hud-substat intent-mini" title="等待敌方行动">
+                    <span class="intent-icon">◎</span>
+                    <span class="intent-value">-</span>
+                  </div>
+                </div>
+                <div class="sprite-wrap enemy-wrap" id="enemySpriteWrap">
+                  <img id="enemyPortrait" class="portrait portrait-enemy battle-sprite enemy-sprite" src="./assets/enemy.svg" alt="敌人角色形象" />
+                  <div id="enemyDamageFloat" class="damage-float"></div>
+                </div>
+              </div>
+
+              <div class="arena player-arena">
+                <div class="sprite-wrap player-wrap" id="playerSpriteWrap">
+                  <img id="playerPortrait" class="portrait portrait-player battle-sprite player-sprite" src="./assets/hero.svg" alt="玩家角色形象" />
+                  <div id="playerDamageFloat" class="damage-float"></div>
+                </div>
+                <div class="hp-panel">
+                  <div class="name-row">
+                    <span id="playerNameTag">怪盗旅者</span>
+                    <span id="playerLevelTag">Lv.1</span>
+                  </div>
+                  <div class="hp-track"><div id="playerHpFill" class="hp-fill"></div></div>
+                  <div id="playerHpText" class="hp-text">0 / 0</div>
+                  <p id="energyStat" class="hud-substat">能量 3/3</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="move-banner-shell">
+              <div id="moveBanner" class="move-banner idle">等待行动…</div>
+            </div>
+
+
+            <div class="status-board">
+              <div class="status-col">
+                <h4>你的状态</h4>
+                <div id="playerStatusTags" class="status-tags"></div>
+              </div>
+              <div class="status-col">
+                <h4>敌方状态</h4>
+                <div id="enemyStatusTags" class="status-tags"></div>
+              </div>
+              <div class="status-help">
+                仅显示生效状态：格挡（先吃伤害）、力量（伤害 +1/层）、易伤（受伤 ×1.5）、虚弱（伤害 ×0.75）。
+              </div>
+            </div>
+
+            <div class="actions">
+              <button id="endTurnBtn" class="btn danger">结束回合</button>
+              <button id="drawBtn" class="btn" disabled>抽牌堆 0</button>
+              <button id="discardBtn" class="btn" disabled>弃牌堆 0</button>
+            </div>
+
+            <div>
+              <div class="hand-header">
+                <h3>手牌</h3>
+                <span id="handLimitStat" class="hand-limit-stat">0 / 10</span>
+              </div>
+              <div id="handView" class="hand"></div>
+            </div>
+          </div>
+
+          <div id="introView" class="intro-view">
+            <h2>Web 复刻原型说明</h2>
+            <p>
+              这是一个受《杀戮尖塔 / 卡牌冒险家》启发的单人卡牌肉鸽原型：
+              战斗、抽牌、三选一卡奖励、营火恢复、精英与首领战都可游玩。
+            </p>
+            <button id="startBtn" class="btn primary">开始冒险</button>
+          </div>
+
+          <div id="endingView" class="ending-view hidden"></div>
+        </section>
+
+        <aside class="panel panel-right">
+          <h2>战斗日志</h2>
+          <div id="logView" class="log-view"></div>
+          <h2>牌库</h2>
+          <div id="deckView" class="deck-view"></div>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>
